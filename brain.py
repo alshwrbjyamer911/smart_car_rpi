@@ -34,7 +34,7 @@ STEERING_LEFT = -1
 STEERING_RIGHT = 1
 STEERING_CENTER = 0
 qr_scanner = QRScanner()
-gps_module = GPSModule("/dev/ttyUSB1")
+gps_module = GPSModule("/dev/ttyAMA0")
 # -------------------------------
 # Motor setup
 # -------------------------------
