@@ -33,7 +33,9 @@ class QRScanner:
         if _PICAMERA2_AVAILABLE:
             # ---- Raspberry Pi: use Picamera2 ----
             self._picam = Picamera2()
-            config = self._picam.create_preview_configuration(
+            # create_video_configuration avoids allocating a secondary RAW
+            # stream which causes "Failed to queue buffer" errors on IMX500
+            config = self._picam.create_video_configuration(
                 main={"size": (640, 480), "format": "RGB888"}
             )
             self._picam.configure(config)
