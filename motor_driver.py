@@ -23,8 +23,8 @@ except (ImportError, RuntimeError):
     GPIO = _GPIOStub()
 
 # GPIO pin mapping
-IN1 = 14  # Left motor forward
-IN2 = 15  # Left motor backward
+IN1 = 24 #14  # Left motor forward
+IN2 = 25 #15  # Left motor backward
 IN3 = 18  # Right motor forward
 IN4 = 23  # Right motor backward
 
