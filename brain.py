@@ -116,12 +116,9 @@ while True:
         }
         if qr_data != last_qr:
             print("Detected Sign (New):", qr_data)
-            # Log to GPS (module initialized once at top)
-            gps_module.get_and_log_once(qr_data=qr_data)
+            motor.stop()            # stop immediately before anything else
             last_qr = qr_data
-            
-            motor.stop()
-            time.sleep(1.0)
+            gps_module.get_and_log_once(qr_data=qr_data)  # log while stationary (up to 5s)
 
 
     # -------------------------------
