@@ -6,6 +6,7 @@ falls back to OpenCV VideoCapture on PC/dev environment.
 """
 
 import cv2
+import time
 from pyzbar.pyzbar import decode
 
 # -------------------------------------------------------
@@ -40,6 +41,7 @@ class QRScanner:
             )
             self._picam.configure(config)
             self._picam.start()
+            time.sleep(2)   # let the sensor warm up — prevents blank frames
             print("[qr] Picamera2 started (RPi mode)")
         else:
             # ---- PC: use OpenCV webcam ----
@@ -88,7 +90,7 @@ class QRScanner:
 
         # Show preview window on screen (works on both RPi desktop and PC)
         if self.show_preview and frame is not None:
-            cv2.imshow("Smart Car – Camera", frame)
+            cv2.imshow("Smart Car - Camera", frame)  # ASCII dash avoids encoding glitch
             cv2.waitKey(1)   # 1 ms pump — keeps the window alive without blocking
 
         return qr_data, frame
@@ -97,8 +99,9 @@ class QRScanner:
     def _capture_frame(self):
         """Internal: grab a BGR frame from whichever backend is active."""
         if self._picam is not None:
+            # Explicitly request the 'main' stream (required for video config)
             # picamera2 returns RGB888; convert to BGR for OpenCV / pyzbar
-            rgb = self._picam.capture_array()
+            rgb = self._picam.capture_array("main")
             bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
             return bgr
         else:
