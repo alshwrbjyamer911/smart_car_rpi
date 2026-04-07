@@ -33,15 +33,10 @@ class QRScanner:
 
         if _PICAMERA2_AVAILABLE:
             # ---- Raspberry Pi: use Picamera2 ----
+            # Simple init that matches the working test — no configure() needed
             self._picam = Picamera2()
-            # create_video_configuration avoids allocating a secondary RAW
-            # stream which causes "Failed to queue buffer" errors on IMX500
-            config = self._picam.create_video_configuration(
-                main={"size": (640, 480), "format": "RGB888"}
-            )
-            self._picam.configure(config)
             self._picam.start()
-            time.sleep(2)   # let the sensor warm up — prevents blank frames
+            time.sleep(1)   # let sensor stabilise
             print("[qr] Picamera2 started (RPi mode)")
         else:
             # ---- PC: use OpenCV webcam ----
@@ -99,11 +94,8 @@ class QRScanner:
     def _capture_frame(self):
         """Internal: grab a BGR frame from whichever backend is active."""
         if self._picam is not None:
-            # Explicitly request the 'main' stream (required for video config)
-            # picamera2 returns RGB888; convert to BGR for OpenCV / pyzbar
-            rgb = self._picam.capture_array("main")
-            bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-            return bgr
+            # No color conversion — picamera2 default output works with cv2 directly
+            return self._picam.capture_array()
         else:
             ret, frame = self._cap.read()
             return frame if ret else None
