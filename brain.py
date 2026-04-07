@@ -167,7 +167,7 @@ while True:
     distances = lidar_data["distances"]
     front_indices = [34, 35, 0, 1, 2]
     min_front = min([distances[i] for i in front_indices])
-    front_only = front_indices[0]
+    front_only = distances[front_indices[0]]   # BUG FIX: was front_indices[0] (=34, the index, not the distance)
     if front_only < STOP_THRESHOLD:
         obstacle_blocked = True
     elif front_only > RESUME_THRESHOLD:
@@ -182,4 +182,6 @@ while True:
             time.sleep(0.05)
         continue
 
+    # Path is clear — drive forward
+    motor.forward()
     time.sleep(0.05)  # 20 Hz loop
